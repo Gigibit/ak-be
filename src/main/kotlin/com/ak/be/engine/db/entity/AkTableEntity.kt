@@ -28,10 +28,10 @@ class AkTableEntity {
     @get:JoinColumn(name = "RESTAURANT_ID", referencedColumnName = "ID", nullable = false)
     var akRestaurantByRestaurantId: AkRestaurantEntity? = null
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o == null || javaClass != o.javaClass) return false
-        val that = o as AkTableEntity?
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+        val that = other as AkTableEntity?
         return id == that!!.id &&
                 numberOfPlaces == that.numberOfPlaces &&
                 title == that.title &&

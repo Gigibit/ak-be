@@ -28,10 +28,10 @@ class AkDishEntity {
     @get:OneToMany(mappedBy = "akDishByDishId")
     var akMenusById: Collection<AkMenuEntity>? = null
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o == null || javaClass != o.javaClass) return false
-        val that = o as AkDishEntity?
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+        val that = other as AkDishEntity?
         return id == that!!.id &&
                 title == that.title &&
                 imgUrl == that.imgUrl &&
@@ -43,4 +43,5 @@ class AkDishEntity {
     override fun hashCode(): Int {
         return Objects.hash(id, title, imgUrl, description, createdAt, updatedAt)
     }
+
 }
