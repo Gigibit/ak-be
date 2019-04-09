@@ -1,8 +1,8 @@
-package com.ak.be.engine.controller
+package com.ak.be.engine.controller.dish
 
-import com.ak.be.engine.controller.dto.DishDto
-import com.ak.be.engine.controller.dto.GetDishesByRestaurantIdResponse
-import com.ak.be.engine.service.DishService
+import com.ak.be.engine.controller.dish.dto.DishDto
+import com.ak.be.engine.controller.dish.dto.GetDishesByRestaurantIdResponse
+import com.ak.be.engine.service.dish.DishService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

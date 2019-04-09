@@ -12,7 +12,7 @@ class AkTableEntity {
     var id: Int = 0
     @get:Basic
     @get:Column(name = "TITLE")
-    var title: String? = null
+    lateinit var title: String
     @get:Basic
     @get:Column(name = "CREATED_AT")
     var createdAt: Timestamp? = null

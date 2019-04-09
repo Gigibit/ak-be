@@ -1,18 +1,13 @@
-package com.ak.be.engine.controller
+package com.ak.be.engine.controller.dish
 
 import com.ak.be.engine.EngineApplicationTests
-import com.ak.be.engine.controller.dto.GetDishesByRestaurantIdResponse
+import com.ak.be.engine.controller.dish.dto.GetDishesByRestaurantIdResponse
 import org.junit.Assert
 import org.junit.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpStatus
 
 
 class DishControllerTest : EngineApplicationTests() {
-
-    @Autowired
-    lateinit var testRestTemplate: TestRestTemplate
 
     @Test
     fun getDishesByRestaurantId() {
