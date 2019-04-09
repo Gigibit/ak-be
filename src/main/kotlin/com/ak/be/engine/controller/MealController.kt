@@ -19,4 +19,14 @@ class MealController {
         val list = dishService.getDishesByRestaurantId(restaurantId).map { DishDto(it.id, it.title) }
         return GetDishesByRestaurantIdResponse(list)
     }
+
+    @GetMapping("dishes/{id}")
+    fun getDishById(@PathVariable id: Int): DishDto {
+        val found = dishService.getDishById(id)?.let { DishDto(it.id, it.title) }
+        if (found == null) {
+            throw IllegalArgumentException("not found")
+        } else {
+            return DishDto(found.id, found.title)
+        }
+    }
 }
