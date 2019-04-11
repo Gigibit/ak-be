@@ -1,7 +1,6 @@
 package com.ak.be.engine.controller.dish
 
 import com.ak.be.engine.controller.dish.dto.DishDto
-import com.ak.be.engine.controller.dish.dto.GetDishesByRestaurantIdResponse
 import com.ak.be.engine.service.dish.DishService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,12 +12,6 @@ class DishController {
 
     @Autowired
     lateinit var dishService: DishService
-
-    @GetMapping("restaurant/{restaurantId}/dishes")
-    fun getDishesByRestaurantId(@PathVariable restaurantId: Int): GetDishesByRestaurantIdResponse {
-        val list = dishService.getDishesByRestaurantId(restaurantId).map { DishDto(it.id, it.title) }
-        return GetDishesByRestaurantIdResponse(list)
-    }
 
     @GetMapping("dishes/{id}")
     fun getDishById(@PathVariable id: Int): DishDto {
