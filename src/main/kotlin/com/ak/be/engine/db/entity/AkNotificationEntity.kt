@@ -5,42 +5,38 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-@Table(name = "AK_USER", schema = "PUBLIC", catalog = "DEFAULT")
-class AkUserEntity {
+@Table(name = "AK_NOTIFICATION", schema = "PUBLIC", catalog = "DEFAULT")
+class AkNotificationEntity {
     @get:Id
     @get:Column(name = "ID")
     var id: Int = 0
     @get:Basic
-    @get:Column(name = "FIRST_NAME")
-    lateinit var firstName: String
+    @get:Column(name = "TITLE")
+    lateinit var title: String
     @get:Basic
-    @get:Column(name = "LAST_NAME")
-    lateinit var lastName: String
-    @get:Basic
-    @get:Column(name = "EMAIL")
-    lateinit var email: String
+    @get:Column(name = "DESCRIPTION")
+    var description: String? = null
     @get:Basic
     @get:Column(name = "CREATED_AT")
-    var createdAt: Timestamp? = null
+    lateinit var createdAt: Timestamp
     @get:Basic
     @get:Column(name = "UPDATED_AT")
     var updatedAt: Timestamp? = null
-    @get:OneToMany(mappedBy = "akUserByUserId")
+    @get:OneToMany(mappedBy = "akNotificationByNotificationId")
     var akOrdersById: Collection<AkOrderEntity>? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || javaClass != other.javaClass) return false
-        val that = other as AkUserEntity?
+        val that = other as AkNotificationEntity?
         return id == that!!.id &&
-                firstName == that.firstName &&
-                lastName == that.lastName &&
-                email == that.email &&
+                title == that.title &&
+                description == that.description &&
                 createdAt == that.createdAt &&
                 updatedAt == that.updatedAt
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(id, firstName, lastName, email, createdAt, updatedAt)
+        return Objects.hash(id, title, description, createdAt, updatedAt)
     }
 }

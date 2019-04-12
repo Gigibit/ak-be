@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 
 @EnableTransactionManagement
 @SpringBootApplication
+//@ConfigurationProprties
 class EngineApplication
 
 fun main(args: Array<String>) {

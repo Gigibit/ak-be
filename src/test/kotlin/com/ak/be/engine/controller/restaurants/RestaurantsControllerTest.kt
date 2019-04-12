@@ -2,10 +2,8 @@ package com.ak.be.engine.controller.restaurants
 
 import com.ak.be.engine.EngineApplicationTests
 import com.ak.be.engine.controller.dish.dto.GetDishesByRestaurantIdResponse
-import com.ak.be.engine.controller.restaurant.CREATE_TABLES_BY_ID
-import com.ak.be.engine.controller.restaurant.GET_DISHES_BY_ID
-import com.ak.be.engine.controller.restaurant.GET_RESTAURANT_BY_ID
-import com.ak.be.engine.controller.restaurant.GET_TABLES_BY_ID
+import com.ak.be.engine.controller.restaurant.*
+import com.ak.be.engine.controller.restaurant.dto.GetOrdersResponse
 import com.ak.be.engine.controller.restaurant.dto.RestaurantDto
 import com.ak.be.engine.controller.table.dto.CreateTableForRestaurantRequest
 import com.ak.be.engine.controller.table.dto.GetTablesByRestaurantIdResponse
@@ -51,6 +49,16 @@ class RestaurantsControllerTest : EngineApplicationTests() {
 
         val tables = privateGetTablesById(restaurantId)
         Assert.assertTrue(tables.contains(result.body))
+    }
+
+    @Test
+    fun getOrders() {
+        val restaurantId = 1
+        val result = testRestTemplate.getForEntity(GET_ORDERS_BY_ID.replace("{restaurantId}", restaurantId.toString()), GetOrdersResponse::class.java)
+        Assert.assertNotNull(result)
+        Assert.assertEquals(result.statusCode, HttpStatus.OK)
+        Assert.assertNotNull(result.body)
+        Assert.assertTrue(!result.body!!.orders.isEmpty())
     }
 
     private fun privateGetTablesById(restaurantId: Int): List<TableDto> {

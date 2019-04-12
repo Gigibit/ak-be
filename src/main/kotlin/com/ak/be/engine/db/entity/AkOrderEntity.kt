@@ -12,10 +12,14 @@ class AkOrderEntity {
     var id: Int = 0
     @get:Basic
     @get:Column(name = "CREATED_AT")
-    var createdAt: Timestamp? = null
+    lateinit var createdAt: Timestamp
     @get:Basic
     @get:Column(name = "UPDATED_AT")
     var updatedAt: Timestamp? = null
+    @get:ManyToOne
+    @get:JoinColumn(name = "NOTIFICATION_ID", referencedColumnName = "ID")
+    var akNotificationByNotificationId: AkNotificationEntity? = null
+
     @get:ManyToOne
     @get:JoinColumn(name = "MENU_ID", referencedColumnName = "ID", nullable = false)
     var akMenuByMenuId: AkMenuEntity? = null
