@@ -4,7 +4,9 @@ import com.ak.be.engine.EngineApplicationTests
 import com.ak.be.engine.controller.dish.dto.GetDishesByRestaurantIdResponse
 import com.ak.be.engine.controller.restaurant.CREATE_TABLES_BY_ID
 import com.ak.be.engine.controller.restaurant.GET_DISHES_BY_ID
+import com.ak.be.engine.controller.restaurant.GET_RESTAURANT_BY_ID
 import com.ak.be.engine.controller.restaurant.GET_TABLES_BY_ID
+import com.ak.be.engine.controller.restaurant.dto.RestaurantDto
 import com.ak.be.engine.controller.table.dto.CreateTableForRestaurantRequest
 import com.ak.be.engine.controller.table.dto.GetTablesByRestaurantIdResponse
 import com.ak.be.engine.controller.table.dto.TableDto
@@ -22,6 +24,17 @@ class RestaurantsControllerTest : EngineApplicationTests() {
         Assert.assertNotNull(result.body)
         Assert.assertTrue(result.body!!.dishes.isNotEmpty())
         Assert.assertEquals(result.statusCode, HttpStatus.OK)
+    }
+
+    @Test
+    fun getRestaurantById() {
+        val restaurantId = 1
+        val result = testRestTemplate.getForEntity(GET_RESTAURANT_BY_ID.replace("{restaurantId}", restaurantId.toString()), RestaurantDto::class.java)
+        Assert.assertNotNull(result)
+        Assert.assertEquals(result.statusCode, HttpStatus.OK)
+        Assert.assertNotNull(result.body)
+        Assert.assertTrue(result.body!!.id == restaurantId)
+
     }
 
     @Test

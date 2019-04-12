@@ -12,7 +12,7 @@ class AkRestaurantEntity {
     var id: Int = 0
     @get:Basic
     @get:Column(name = "TITLE")
-    var title: String? = null
+    lateinit var title: String
     @get:Basic
     @get:Column(name = "IMG_URL")
     var imgUrl: String? = null
