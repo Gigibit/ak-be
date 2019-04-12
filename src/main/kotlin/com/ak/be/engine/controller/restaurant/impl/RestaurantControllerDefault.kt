@@ -1,7 +1,8 @@
-package com.ak.be.engine.controller.restaurant
+package com.ak.be.engine.controller.restaurant.impl
 
 import com.ak.be.engine.controller.dish.dto.DishDto
 import com.ak.be.engine.controller.dish.dto.GetDishesByRestaurantIdResponse
+import com.ak.be.engine.controller.restaurant.RestaurantController
 import com.ak.be.engine.controller.table.dto.CreateTableForRestaurantRequest
 import com.ak.be.engine.controller.table.dto.GetTablesByRestaurantIdResponse
 import com.ak.be.engine.controller.table.dto.TableDto
