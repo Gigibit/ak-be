@@ -1,5 +1,6 @@
 package com.ak.be.engine.controller.restaurant.impl
 
+import com.ak.be.engine.controller.Authenticatable
 import com.ak.be.engine.controller.dish.dto.DishDto
 import com.ak.be.engine.controller.dish.dto.GetDishesByRestaurantIdResponse
 import com.ak.be.engine.controller.restaurant.RestaurantController
@@ -16,10 +17,12 @@ import com.ak.be.engine.service.restaurant.model.Restaurant
 import com.ak.be.engine.service.table.TableService
 import com.ak.be.engine.service.table.model.Table
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.messaging.simp.SimpMessageSendingOperations
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.util.HtmlUtils
 
 const val DEFAULT_LIMIT = 10
 const val DEFAULT_OFFSET = 0
@@ -28,9 +31,15 @@ const val DEFAULT_OFFSET = 0
 class RestaurantControllerDefault(@Autowired val dishService: DishService,
                                   @Autowired val tableService: TableService,
                                   @Autowired val restaurantService: RestaurantService,
-                                  @Autowired val orderService: OrderService) : RestaurantController {
+                                  @Autowired val orderService: OrderService,
+                                  @Autowired val simpMessagingTemplate: SimpMessageSendingOperations) : RestaurantController, Authenticatable {
 
     override fun getRestaurantById(@PathVariable restaurantId: Int): RestaurantDto {
+        val authentication = getAuthentication()
+        if (authentication != null) {
+            simpMessagingTemplate.convertAndSendToUser(authentication.name, "/topic/greetings", "{\"content\":\"Hello, " + HtmlUtils.htmlEscape(authentication.name) + "\"}")
+
+        }
         val restaurantById = restaurantService.getRestaurantById(restaurantId)
         if (restaurantById == null) {
             throw IllegalArgumentException("not found")
