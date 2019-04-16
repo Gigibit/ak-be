@@ -38,6 +38,7 @@ class RestaurantControllerDefault(@Autowired val dishService: DishService,
         val authentication = getAuthentication()
         if (authentication != null) {
             simpMessagingTemplate.convertAndSendToUser(authentication.name, "/topic/greetings", "{\"content\":\"Hello, " + HtmlUtils.htmlEscape(authentication.name) + "\"}")
+            simpMessagingTemplate.convertAndSendToUser("dan", "/topic/greetings", "{\"content\":\"Hello, " + HtmlUtils.htmlEscape("dan") + "\"}")
 
         }
         val restaurantById = restaurantService.getRestaurantById(restaurantId)

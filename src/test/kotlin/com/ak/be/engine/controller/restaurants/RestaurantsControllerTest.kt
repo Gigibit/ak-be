@@ -9,19 +9,28 @@ import com.ak.be.engine.controller.table.dto.CreateTableForRestaurantRequest
 import com.ak.be.engine.controller.table.dto.GetTablesByRestaurantIdResponse
 import com.ak.be.engine.controller.table.dto.TableDto
 import org.junit.Assert
+import org.junit.Before
 import org.junit.Test
+import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpStatus
 
 
 class RestaurantsControllerTest : EngineApplicationTests() {
 
+    lateinit var restTemplateWithBasic: TestRestTemplate
+
+    @Before
+    fun setUp() {
+        restTemplateWithBasic = testRestTemplate.withBasicAuth("ian", "ian")
+    }
+
     @Test
     fun getDishesById() {
-        val result = testRestTemplate.getForEntity(GET_DISHES_BY_ID.replace("{restaurantId}", "1", true), GetDishesByRestaurantIdResponse::class.java)
+        val result = restTemplateWithBasic.getForEntity(GET_DISHES_BY_ID.replace("{restaurantId}", "1", true), GetDishesByRestaurantIdResponse::class.java)
+        Assert.assertEquals(result.statusCode, HttpStatus.OK)
         Assert.assertNotNull(result)
         Assert.assertNotNull(result.body)
         Assert.assertTrue(result.body!!.dishes.isNotEmpty())
-        Assert.assertEquals(result.statusCode, HttpStatus.OK)
     }
 
     @Test
