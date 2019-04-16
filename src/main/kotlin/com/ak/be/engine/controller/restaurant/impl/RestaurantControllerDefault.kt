@@ -37,8 +37,8 @@ class RestaurantControllerDefault(@Autowired val dishService: DishService,
     override fun getRestaurantById(@PathVariable restaurantId: Int): RestaurantDto {
         val authentication = getAuthentication()
         if (authentication != null) {
-            simpMessagingTemplate.convertAndSendToUser(authentication.name, "/topic/greetings", "{\"content\":\"Hello, " + HtmlUtils.htmlEscape(authentication.name) + "\"}")
-            simpMessagingTemplate.convertAndSendToUser("dan", "/topic/greetings", "{\"content\":\"Hello, " + HtmlUtils.htmlEscape("dan") + "\"}")
+            simpMessagingTemplate.convertAndSendToUser(authentication.name, "/topic/orders", "{\"content\":\"Hello, " + HtmlUtils.htmlEscape(authentication.name) + "\"}")
+            simpMessagingTemplate.convertAndSendToUser("dan", "/topic/orders", "{\"content\":\"Hello, " + HtmlUtils.htmlEscape("dan") + "\"}")
 
         }
         val restaurantById = restaurantService.getRestaurantById(restaurantId)

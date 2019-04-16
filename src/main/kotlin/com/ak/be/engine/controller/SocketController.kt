@@ -27,11 +27,11 @@ class SocketController(@Autowired val simpMessagingTemplate: SimpMessageSendingO
 
 
     @MessageMapping("/hello")
-    @SendToUser("/topic/greetings")
+    @SendToUser("/topic/orders")
     @Throws(Exception::class)
     fun greeting(principal: Principal, message: String): String {
         Thread.sleep(1000) // simulated delay
-        simpMessagingTemplate.convertAndSendToUser(principal.name, "/topic/greetings", "{\"content\":\"Hello, " + HtmlUtils.htmlEscape(principal.name) + "\"}")
+        simpMessagingTemplate.convertAndSendToUser(principal.name, "/topic/orders", "{\"content\":\"Hello, " + HtmlUtils.htmlEscape(principal.name) + "\"}")
         return "{\"content\":\"Hello, " + HtmlUtils.htmlEscape(message) + "\"}"
     }
 }

@@ -37,7 +37,7 @@ class WebSocketConfig : WebSocketMessageBrokerConfigurer {
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
         //root
 //        registry.addEndpoint("/greeting").withSockJS()
-        registry.addEndpoint("/gs-guide-websocket").withSockJS()
+        registry.addEndpoint("/ak-websocket").withSockJS()
     }
 }
 
