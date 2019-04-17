@@ -15,7 +15,6 @@ const val CREATE_TABLES_BY_ID = "/restaurants/{restaurantId}/tables"
 const val GET_RESTAURANT_BY_ID = "/restaurants/{restaurantId}"
 const val GET_ORDERS_BY_ID = "/restaurants/{restaurantId}/orders"
 
-
 interface RestaurantController {
 
     @GetMapping(GET_RESTAURANT_BY_ID)

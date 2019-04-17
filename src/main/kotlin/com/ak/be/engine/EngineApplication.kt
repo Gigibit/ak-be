@@ -6,6 +6,7 @@ import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.simp.config.MessageBrokerRegistry
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.transaction.annotation.EnableTransactionManagement
@@ -52,4 +53,9 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
         auth.inMemoryAuthentication().withUser("dan").password("{noop}dan").roles("USER")
         auth.inMemoryAuthentication().withUser("chris").password("{noop}chris").roles("USER")
     }
+
+    override fun configure(http: HttpSecurity?) {
+        super.configure(http?.csrf()?.disable())
+    }
+
 }

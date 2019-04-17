@@ -1,5 +1,7 @@
 package com.ak.be.engine.db.entity
 
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 import java.sql.Timestamp
 import java.util.*
 import javax.persistence.*
@@ -8,6 +10,7 @@ import javax.persistence.*
 @Table(name = "AK_NOTIFICATION", schema = "PUBLIC", catalog = "DEFAULT")
 class AkNotificationEntity {
     @get:Id
+    @get:GeneratedValue(strategy = GenerationType.IDENTITY)
     @get:Column(name = "ID")
     var id: Int = 0
     @get:Basic
@@ -17,9 +20,11 @@ class AkNotificationEntity {
     @get:Column(name = "DESCRIPTION")
     var description: String? = null
     @get:Basic
+    @get:CreationTimestamp
     @get:Column(name = "CREATED_AT")
-    lateinit var createdAt: Timestamp
+    var createdAt: Timestamp? = null
     @get:Basic
+    @get:UpdateTimestamp
     @get:Column(name = "UPDATED_AT")
     var updatedAt: Timestamp? = null
     @get:OneToMany(mappedBy = "akNotificationByNotificationId")

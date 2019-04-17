@@ -1,6 +1,6 @@
 package com.ak.be.engine.service.table
 
-import com.ak.be.engine.service.table.model.Table
+import com.ak.be.engine.service.model.Table
 
 interface TableService {
 

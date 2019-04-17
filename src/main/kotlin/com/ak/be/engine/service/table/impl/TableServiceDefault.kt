@@ -3,8 +3,8 @@ package com.ak.be.engine.service.table.impl
 import com.ak.be.engine.db.entity.AkTableEntity
 import com.ak.be.engine.db.repository.RestaurantRepository
 import com.ak.be.engine.db.repository.TableRepository
+import com.ak.be.engine.service.model.Table
 import com.ak.be.engine.service.table.TableService
-import com.ak.be.engine.service.table.model.Table
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

@@ -3,7 +3,7 @@ package com.ak.be.engine.service.dish.impl
 import com.ak.be.engine.db.entity.AkDishEntity
 import com.ak.be.engine.db.repository.DishRepository
 import com.ak.be.engine.service.dish.DishService
-import com.ak.be.engine.service.dish.model.Dish
+import com.ak.be.engine.service.model.Dish
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*

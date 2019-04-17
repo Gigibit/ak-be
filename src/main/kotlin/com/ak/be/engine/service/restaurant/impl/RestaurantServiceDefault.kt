@@ -2,8 +2,8 @@ package com.ak.be.engine.service.restaurant.impl
 
 import com.ak.be.engine.db.entity.AkRestaurantEntity
 import com.ak.be.engine.db.repository.RestaurantRepository
+import com.ak.be.engine.service.model.Restaurant
 import com.ak.be.engine.service.restaurant.RestaurantService
-import com.ak.be.engine.service.restaurant.model.Restaurant
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

@@ -26,6 +26,20 @@ class RestaurantsControllerTest : EngineApplicationTests() {
 
     @Test
     fun getDishesById() {
+
+//        val plainCredentials = "ian:ian"
+//        val base64Credentials = Base64.getEncoder().encodeToString(plainCredentials.toByteArray())
+//
+//
+//        val headers = HttpHeaders()
+//        headers.contentType = MediaType.APPLICATION_JSON
+//        headers.set("Authorization", "Basic $base64Credentials")
+//
+//
+////        testRestTemplate.restTemplate.interceptors.add(BasicAuthenticationInterceptor("ian","ian"))
+//
+////        val result = testRestTemplate.exchange("/restaurants/{restaurantId}/dishes/".replace("{restaurantId}", "1", true), HttpMethod.POST, HttpEntity(null, headers), GetDishesByRestaurantIdResponse::class.java)
+//
         val result = restTemplateWithBasic.getForEntity(GET_DISHES_BY_ID.replace("{restaurantId}", "1", true), GetDishesByRestaurantIdResponse::class.java)
         Assert.assertEquals(result.statusCode, HttpStatus.OK)
         Assert.assertNotNull(result)
@@ -53,7 +67,7 @@ class RestaurantsControllerTest : EngineApplicationTests() {
     fun createTableById() {
         val restaurantId = 1
         val createTableForRestaurantRequest = CreateTableForRestaurantRequest("New table", 10)
-        val result = testRestTemplate.postForEntity(CREATE_TABLES_BY_ID.replace("{restaurantId}", restaurantId.toString(), true), createTableForRestaurantRequest, TableDto::class.java)
+        val result = restTemplateWithBasic.postForEntity(CREATE_TABLES_BY_ID.replace("{restaurantId}", restaurantId.toString(), true), createTableForRestaurantRequest, TableDto::class.java)
         Assert.assertNotNull(result)
 
         val tables = privateGetTablesById(restaurantId)
@@ -63,11 +77,11 @@ class RestaurantsControllerTest : EngineApplicationTests() {
     @Test
     fun getOrders() {
         val restaurantId = 1
-        val result = testRestTemplate.getForEntity(GET_ORDERS_BY_ID.replace("{restaurantId}", restaurantId.toString()), GetOrdersResponse::class.java)
+        val result = restTemplateWithBasic.getForEntity(GET_ORDERS_BY_ID.replace("{restaurantId}", restaurantId.toString()), GetOrdersResponse::class.java)
         Assert.assertNotNull(result)
         Assert.assertEquals(result.statusCode, HttpStatus.OK)
         Assert.assertNotNull(result.body)
-        Assert.assertTrue(!result.body!!.orders.isEmpty())
+        Assert.assertTrue(result.body!!.orders.isNotEmpty())
     }
 
     private fun privateGetTablesById(restaurantId: Int): List<TableDto> {
