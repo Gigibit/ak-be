@@ -1,5 +1,7 @@
 package com.ak.be.engine.db.entity
 
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 import java.sql.Timestamp
 import java.util.*
 import javax.persistence.*
@@ -8,12 +10,15 @@ import javax.persistence.*
 @Table(name = "AK_MENU", schema = "PUBLIC", catalog = "DEFAULT")
 class AkMenuEntity {
     @get:Id
+    @get:GeneratedValue(strategy = GenerationType.IDENTITY)
     @get:Column(name = "ID")
     var id: Int = 0
     @get:Basic
+    @get:CreationTimestamp
     @get:Column(name = "CREATED_AT")
     var createdAt: Timestamp? = null
     @get:Basic
+    @get:UpdateTimestamp
     @get:Column(name = "UPDATED_AT")
     var updatedAt: Timestamp? = null
     @get:Basic

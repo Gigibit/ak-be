@@ -26,5 +26,6 @@ class OrderControllerDefaultTest : EngineApplicationTests() {
         Assert.assertNotNull(result)
         Assert.assertEquals(result.statusCode, HttpStatus.OK)
         Assert.assertNotNull(result)
+        Thread.sleep(5000)
     }
 }

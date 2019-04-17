@@ -5,13 +5,14 @@ import com.ak.be.engine.controller.restaurant.dto.CreateOrderRequest
 import com.ak.be.engine.controller.restaurant.dto.OrderDto
 import com.ak.be.engine.service.model.Order
 import com.ak.be.engine.service.model.toDto
+import com.ak.be.engine.service.notification.NotificationService
 import com.ak.be.engine.service.order.OrderService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class OrderControllerDefault(@Autowired val orderService: OrderService) : OrderController {
+class OrderControllerDefault(@Autowired val orderService: OrderService, @Autowired val notificationService: NotificationService) : OrderController {
 
     override fun createOrder(@RequestBody request: CreateOrderRequest): OrderDto {
         val menuId = request.menuId
@@ -21,8 +22,10 @@ class OrderControllerDefault(@Autowired val orderService: OrderService) : OrderC
             throw IllegalArgumentException("at least tableId or userId must not be null")
         }
         val order: Order = orderService.createOrder(menuId, tableId, userId)
-
         //send notification
+        //find user of restaurant in db by restaurant id
+        val userName = "ian"
+        notificationService.sendNotification(userName, order.notification)
         return order.toDto()
     }
 }

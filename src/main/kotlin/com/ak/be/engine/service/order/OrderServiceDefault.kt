@@ -77,7 +77,7 @@ class OrderServiceDefault(@Autowired val orderRepository: OrderRepository, @Auto
             val createdAt = it.createdAt?.toLocalDateTime()
                     ?: throw IllegalStateException("createdAt is null")
             Notification(n.id, n.title, createdAt, n.description)
-        }
+        } ?: throw IllegalStateException("Notification is null")
 
         val menu = it.akMenuByMenuId?.let { n: AkMenuEntity ->
             val dish = n.akDishByDishId?.let { d: AkDishEntity ->
