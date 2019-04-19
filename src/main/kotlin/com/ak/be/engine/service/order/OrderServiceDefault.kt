@@ -69,8 +69,11 @@ class OrderServiceDefault(@Autowired val orderRepository: OrderRepository,
     }
 
     override fun getOrders(restaurantId: Int, limit: Int, offset: Int): List<Order> {
-        TODO()
-//        return orderRepository.findOrdersByRestaurantId(restaurantId, limit, offset).map(fromEntityOrderToModel)
+        return orderRepository.findOrdersByRestaurantId(restaurantId, limit, offset)
+                .map { akOrderEntity: AkOrderEntity ->
+                    val menuOrders = menuOrderRepository.findAllByOrderId(akOrderEntity.id)
+                    fromEntityOrderToModel(akOrderEntity, menuOrders)
+                }
     }
 
     val fromEntityOrderToModel = { it: AkOrderEntity, menuOrders: List<AkMenuOrderEntity> ->
