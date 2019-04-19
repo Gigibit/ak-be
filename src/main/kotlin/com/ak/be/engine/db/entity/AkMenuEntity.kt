@@ -33,8 +33,6 @@ class AkMenuEntity {
     @get:ManyToOne
     @get:JoinColumn(name = "RESTAURANT_ID", referencedColumnName = "ID", nullable = false)
     var akRestaurantByRestaurantId: AkRestaurantEntity? = null
-    @get:OneToMany(mappedBy = "akMenuByMenuId")
-    var akOrdersById: Collection<AkOrderEntity>? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

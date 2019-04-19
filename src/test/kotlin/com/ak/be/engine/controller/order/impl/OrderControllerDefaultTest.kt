@@ -22,10 +22,10 @@ class OrderControllerDefaultTest : EngineApplicationTests() {
 
     @Test
     fun createOrder() {
-        val result = restTemplateWithBasic.postForEntity(CREATE_ORDER, CreateOrderRequest(1, null, 1), OrderDto::class.java)
+        val result = restTemplateWithBasic.postForEntity(CREATE_ORDER, CreateOrderRequest(arrayOf(1, 2).toList(), null, 1), OrderDto::class.java)
         Assert.assertNotNull(result)
         Assert.assertEquals(result.statusCode, HttpStatus.OK)
         Assert.assertNotNull(result)
-        Thread.sleep(5000)
+        Thread.sleep(2000)
     }
 }

@@ -1,26 +1,27 @@
 package com.ak.be.engine.service.order
 
 import com.ak.be.engine.db.entity.*
-import com.ak.be.engine.db.repository.MenuRepository
-import com.ak.be.engine.db.repository.OrderRepository
-import com.ak.be.engine.db.repository.TableRepository
-import com.ak.be.engine.db.repository.UserRepository
+import com.ak.be.engine.db.repository.*
 import com.ak.be.engine.service.model.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class OrderServiceDefault(@Autowired val orderRepository: OrderRepository, @Autowired val menuRepository: MenuRepository, @Autowired val tableRepository: TableRepository, @Autowired val userRepository: UserRepository) : OrderService {
+class OrderServiceDefault(@Autowired val orderRepository: OrderRepository,
+                          @Autowired val menuRepository: MenuRepository,
+                          @Autowired val tableRepository: TableRepository,
+                          @Autowired val userRepository: UserRepository,
+                          @Autowired val menuOrderRepository: MenuOrderRepository) : OrderService {
 
     @Transactional
-    override fun createOrder(menuId: Int, tableId: Int?, userId: Int?): Order {
+    override fun createOrder(menuIds: List<Int>, tableId: Int?, userId: Int?): Order {
 
-        val menuFound = menuRepository.findById(menuId)
-        if (!menuFound.isPresent) {
-            throw IllegalStateException("menu not found")
+
+        val foundMenus = menuRepository.findAllById(menuIds).toList()
+        if (foundMenus.size != menuIds.size) {
+            throw IllegalStateException("menu entities found don't match menu ids")
         }
-
 
         val table = tableId?.let {
             val found = tableRepository.findById(it)
@@ -45,8 +46,6 @@ class OrderServiceDefault(@Autowired val orderRepository: OrderRepository, @Auto
         }
 
 
-        val menu = menuFound.get()
-
         val akNotificationEntity = AkNotificationEntity()
         akNotificationEntity.title = "New Order"
         akNotificationEntity.description = "Order has been created"
@@ -54,17 +53,27 @@ class OrderServiceDefault(@Autowired val orderRepository: OrderRepository, @Auto
         val akOrderEntity = AkOrderEntity()
         akOrderEntity.akUserByUserId = user
         akOrderEntity.akTableByTableId = table
-        akOrderEntity.akMenuByMenuId = menu
         akOrderEntity.akNotificationByNotificationId = akNotificationEntity
-        val save = orderRepository.save(akOrderEntity)
-        return fromEntityOrderToModel(save)
+        val savedOrder = orderRepository.save(akOrderEntity)
+
+        val savedMenus = ArrayList<AkMenuOrderEntity>()
+        for (foundMenu in foundMenus) {
+            val akMenuOrderEntity = AkMenuOrderEntity()
+            akMenuOrderEntity.akMenuByMenuId = foundMenu
+            akMenuOrderEntity.akOrderByOrderId = savedOrder
+            val save = menuOrderRepository.save(akMenuOrderEntity)
+            savedMenus.add(save)
+        }
+
+        return fromEntityOrderToModel(savedOrder, savedMenus)
     }
 
     override fun getOrders(restaurantId: Int, limit: Int, offset: Int): List<Order> {
-        return orderRepository.findOrdersByRestaurantId(restaurantId, limit, offset).map(fromEntityOrderToModel)
+        TODO()
+//        return orderRepository.findOrdersByRestaurantId(restaurantId, limit, offset).map(fromEntityOrderToModel)
     }
 
-    val fromEntityOrderToModel = { it: AkOrderEntity ->
+    val fromEntityOrderToModel = { it: AkOrderEntity, menuOrders: List<AkMenuOrderEntity> ->
         val table: Table? = it.akTableByTableId?.let { t: AkTableEntity ->
             Table(t.id, t.title, t.numberOfPlaces)
         }
@@ -79,17 +88,22 @@ class OrderServiceDefault(@Autowired val orderRepository: OrderRepository, @Auto
             Notification(n.id, n.title, createdAt, n.description)
         } ?: throw IllegalStateException("Notification is null")
 
-        val menu = it.akMenuByMenuId?.let { n: AkMenuEntity ->
-            val dish = n.akDishByDishId?.let { d: AkDishEntity ->
-                Dish(d.id, d.title)
-            } ?: throw IllegalStateException("Dish is null")
-            Menu(n.id, n.state, n.type, dish)
-        } ?: throw IllegalStateException("Menu is null")
+
+        val menus = ArrayList<Menu>()
+        for (menuOrder in menuOrders) {
+            val menu = menuOrder.akMenuByMenuId?.let { n: AkMenuEntity ->
+                val dish = n.akDishByDishId?.let { d: AkDishEntity ->
+                    Dish(d.id, d.title)
+                } ?: throw IllegalStateException("Dish is null")
+                Menu(n.id, n.state, n.type, dish)
+            } ?: throw IllegalStateException("Menu is null")
+            menus.add(menu)
+        }
 
         val createdAt = it.createdAt?.toLocalDateTime()
                 ?: throw IllegalStateException("createdAt is null")
 
-        Order(it.id, createdAt, menu, user, table, notification)
+        Order(it.id, createdAt, menus, user, table, notification)
     }
 
 }
