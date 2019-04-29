@@ -81,8 +81,19 @@ class OrderServiceDefault(@Autowired val orderRepository: OrderRepository,
             Table(t.id, t.title, t.numberOfPlaces)
         }
 
-        val user = it.akUserByUserId?.let { u: AkUserEntity ->
-            User(u.id, u.email, u.firstName, u.lastName)
+        val user = it.akUserByUserId?.let { userEntity: AkUserEntity ->
+            val authorities = userEntity.authorities?.map { Authority(it.id, it.name) } ?: ArrayList()
+            User(userEntity.id,
+                    userEntity.email,
+                    userEntity.passwordHash,
+                    userEntity.firstName,
+                    userEntity.lastName,
+                    authorities,
+                    userEntity.accountExpired,
+                    userEntity.accountLocked,
+                    userEntity.credentialsExpired,
+                    userEntity.enabled
+            )
         }
 
         val notification = it.akNotificationByNotificationId?.let { n: AkNotificationEntity ->

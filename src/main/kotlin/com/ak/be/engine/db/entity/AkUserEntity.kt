@@ -23,6 +23,26 @@ class AkUserEntity {
     @get:Column(name = "EMAIL")
     lateinit var email: String
     @get:Basic
+    @get:Column(name = "PASSWORD_HASH")
+    lateinit var passwordHash: String
+
+    @get:Basic
+    @get:Column(name = "ACCOUNT_EXPIRED")
+    var accountExpired: Boolean = false
+
+    @get:Basic
+    @get:Column(name = "ACCOUNT_LOCKED")
+    var accountLocked: Boolean = false
+
+    @get:Basic
+    @get:Column(name = "CREDENTIALS_EXPIRED")
+    var credentialsExpired: Boolean = false
+
+    @get:Basic
+    @get:Column(name = "ENABLED")
+    var enabled: Boolean = true
+
+    @get:Basic
     @get:CreationTimestamp
     @get:Column(name = "CREATED_AT")
     var createdAt: Timestamp? = null
@@ -32,6 +52,11 @@ class AkUserEntity {
     var updatedAt: Timestamp? = null
     @get:OneToMany(mappedBy = "akUserByUserId")
     var akOrdersById: Collection<AkOrderEntity>? = null
+
+
+    @get:ManyToMany(fetch = FetchType.LAZY)
+    @get:JoinTable(name = "AK_USER_AUTHORITY", joinColumns = [JoinColumn(name = "USER_ID", referencedColumnName = "ID")], inverseJoinColumns = [JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")])
+    var authorities: Collection<AkAuthorityEntity>? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
