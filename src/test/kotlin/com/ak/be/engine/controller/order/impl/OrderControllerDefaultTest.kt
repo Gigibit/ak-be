@@ -25,7 +25,7 @@ class OrderControllerDefaultTest : EngineApplicationTests() {
     @Before
     fun setUp() {
 //        restTemplateWithBasic = testRestTemplate.withBasicAuth("ian", "ian")
-        restTemplateWithBasic = testRestTemplate.withBasicAuth("spring-security-oauth2-read-client", "spring-security-oauth2-read-client-password1234")
+        restTemplateWithBasic = testRestTemplate.withBasicAuth("spring-security-oauth2-read-write-client", "spring-security-oauth2-read-write-client-password1234")
         val token = getToken()
 
 //        val headers = HttpHeaders()

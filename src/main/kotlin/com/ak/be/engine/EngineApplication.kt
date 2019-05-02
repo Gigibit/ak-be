@@ -18,7 +18,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer
@@ -28,7 +27,6 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer
 import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler
-import org.springframework.security.oauth2.provider.token.TokenStore
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker
@@ -90,7 +88,7 @@ class ResourceServerConfiguration : ResourceServerConfigurerAdapter() {
                 .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, securedPattern)
-                .access(securedReadScope)//"#oauth2.hasScope('write')"
+                .access(securedWriteScope)//"#oauth2.hasScope('write')"
                 .anyRequest().access(securedReadScope)
     }
 
@@ -114,17 +112,12 @@ class SecurityConfig(@Autowired val userService: UserService) : WebSecurityConfi
         return UserDetailsServiceDefault(userService)
     }
 
-    override fun configure(http: HttpSecurity?) {
-        super.configure(http?.csrf()?.disable())
+    override fun configure(http: HttpSecurity) {
+        super.configure(http.csrf().disable())
     }
 
-    @Bean
-    fun userPasswordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder(8)
-    }
-
-    override fun configure(auth: AuthenticationManagerBuilder?) {
-        auth?.userDetailsService(userDetailsService())?.passwordEncoder(userPasswordEncoder())
+    override fun configure(auth: AuthenticationManagerBuilder) {
+        auth.userDetailsService(userDetailsService()).passwordEncoder(BCryptPasswordEncoder(8))
     }
 
     @Bean
@@ -137,16 +130,9 @@ class SecurityConfig(@Autowired val userService: UserService) : WebSecurityConfi
 @Configuration
 @EnableAuthorizationServer
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-//@Import(ServerSecurityConfig::class)
 class AuthServerOAuth2Config(@Autowired val userDetailsService: UserDetailsService,
                              @Autowired val dataSource: DataSource,
                              @Autowired val authenticationManager: AuthenticationManager) : AuthorizationServerConfigurerAdapter() {
-    @Bean
-    fun tokenStore(): TokenStore {
-        return JdbcTokenStore(dataSource)
-    }
-
-
     @Bean
     fun oauthAccessDeniedHandler(): OAuth2AccessDeniedHandler {
         return OAuth2AccessDeniedHandler()
@@ -155,12 +141,7 @@ class AuthServerOAuth2Config(@Autowired val userDetailsService: UserDetailsServi
     override fun configure(oauthServer: AuthorizationServerSecurityConfigurer) {
         oauthServer.tokenKeyAccess("permitAll()")
                 .checkTokenAccess("isAuthenticated()")
-                .passwordEncoder(oauthClientPasswordEncoder())
-    }
-
-    @Bean
-    fun oauthClientPasswordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder(4)
+                .passwordEncoder(BCryptPasswordEncoder(4))
     }
 
     @Throws(Exception::class)
@@ -169,7 +150,7 @@ class AuthServerOAuth2Config(@Autowired val userDetailsService: UserDetailsServi
     }
 
     override fun configure(endpoints: AuthorizationServerEndpointsConfigurer) {
-        endpoints.tokenStore(tokenStore())
+        endpoints.tokenStore(JdbcTokenStore(dataSource))
                 .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService)
     }
