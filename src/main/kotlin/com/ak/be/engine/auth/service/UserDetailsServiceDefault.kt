@@ -1,8 +1,8 @@
 package com.ak.be.engine.auth.service
 
 import com.ak.be.engine.db.repository.UserRepository
-import com.ak.be.engine.service.model.Authority
 import com.ak.be.engine.service.model.User
+import com.ak.be.engine.service.model.fromEntity
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker
 import org.springframework.security.core.userdetails.UserDetails
@@ -45,19 +45,7 @@ class UserService(@Autowired val userRepository: UserRepository) {
         }
 
         val userEntity = userRepository.findByEmail(username) ?: throw UsernameNotFoundException("$username not found")
-        val authorities = userEntity.authorities?.map { Authority(it.id, it.name) } ?: ArrayList()
-
-        val user = User(userEntity.id,
-                userEntity.email,
-                userEntity.passwordHash,
-                userEntity.firstName,
-                userEntity.lastName,
-                authorities,
-                userEntity.accountExpired,
-                userEntity.accountLocked,
-                userEntity.credentialsExpired,
-                userEntity.enabled
-        )
+        val user = User.fromEntity(userEntity)
 
         val userDetails = UserDetailsDefault(user)
         AccountStatusUserDetailsChecker().check(userDetails)

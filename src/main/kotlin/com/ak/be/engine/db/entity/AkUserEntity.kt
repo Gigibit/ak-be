@@ -53,10 +53,13 @@ class AkUserEntity {
     @get:OneToMany(mappedBy = "akUserByUserId")
     var akOrdersById: Collection<AkOrderEntity>? = null
 
-
     @get:ManyToMany(fetch = FetchType.LAZY)
     @get:JoinTable(name = "AK_USER_AUTHORITY", joinColumns = [JoinColumn(name = "USER_ID", referencedColumnName = "ID")], inverseJoinColumns = [JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")])
     var authorities: Collection<AkAuthorityEntity>? = null
+
+    @get:ManyToMany(fetch = FetchType.LAZY)
+    @get:JoinTable(name = "AK_USER_RESTAURANT", joinColumns = [JoinColumn(name = "USER_ID", referencedColumnName = "ID")], inverseJoinColumns = [JoinColumn(name = "RESTAURANT_ID", referencedColumnName = "ID")])
+    var restaurants: Collection<AkRestaurantEntity>? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
