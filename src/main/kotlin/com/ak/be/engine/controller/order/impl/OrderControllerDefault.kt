@@ -22,19 +22,19 @@ class OrderControllerDefault(@Autowired val orderService: OrderService,
     override fun createOrder(@Valid @RequestBody request: CreateOrderRequest): OrderDto {
 
         val menuIds = request.menuIds
-
         val tableId = request.tableId
         val userId = request.userId
+
         if (tableId == null && userId == null) {
             throw IllegalArgumentException("at least tableId or userId must not be null")
         }
         val order: Order = orderService.createOrder(menuIds, tableId, userId)
 
         if (menuIds.isNotEmpty()) {
-            //send notification
             val menuId = menuIds.first()
             val users = menuService.findUsersByMenuId(menuId)
             for (user in users) {
+                //send notification
                 notificationService.sendNotification(user.email, order.notification)
             }
         } else {

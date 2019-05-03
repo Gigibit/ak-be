@@ -13,7 +13,7 @@ class MenuServiceDefault(@Autowired val menuRepository: MenuRepository) : MenuSe
     override fun findUsersByMenuId(menuId: Int): List<User> {
         val menu = menuRepository.findById(menuId)
         val users = menu.map {
-            val restaurant = it.akRestaurantByRestaurantId
+            val restaurant = it.restaurant
                     ?: throw IllegalStateException("restaurant not found by menu id $menuId")
             restaurant.users?.map { akUserEntity -> User.fromEntity(akUserEntity) } ?: ArrayList()
         }

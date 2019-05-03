@@ -23,6 +23,10 @@ class OrderServiceDefault(@Autowired val orderRepository: OrderRepository,
             throw IllegalStateException("menu entities found don't match menu ids")
         }
 
+        if (foundMenus.map { akMenuEntity -> akMenuEntity.restaurant?.id }.distinct().size != 1) {
+            throw IllegalStateException("menu entities belong to different restaurants")
+        }
+
         val table = tableId?.let {
             val found = tableRepository.findById(it)
             if (found.isPresent) {

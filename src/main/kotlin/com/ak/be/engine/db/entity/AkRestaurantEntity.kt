@@ -30,7 +30,7 @@ class AkRestaurantEntity {
     @get:UpdateTimestamp
     @get:Column(name = "UPDATED_AT")
     var updatedAt: Timestamp? = null
-    @get:OneToMany(mappedBy = "akRestaurantByRestaurantId")
+    @get:OneToMany(mappedBy = "restaurant")
     var akMenusById: Collection<AkMenuEntity>? = null
     @get:OneToMany(mappedBy = "akRestaurantByRestaurantId")
     var akTablesById: Collection<AkTableEntity>? = null

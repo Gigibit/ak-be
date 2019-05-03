@@ -32,7 +32,7 @@ class AkMenuEntity {
     var akDishByDishId: AkDishEntity? = null
     @get:ManyToOne
     @get:JoinColumn(name = "RESTAURANT_ID", referencedColumnName = "ID", nullable = false)
-    var akRestaurantByRestaurantId: AkRestaurantEntity? = null
+    var restaurant: AkRestaurantEntity? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
