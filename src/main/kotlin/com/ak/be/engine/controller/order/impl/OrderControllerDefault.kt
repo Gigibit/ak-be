@@ -1,5 +1,6 @@
 package com.ak.be.engine.controller.order.impl
 
+import com.ak.be.engine.controller.AuthService
 import com.ak.be.engine.controller.order.OrderController
 import com.ak.be.engine.controller.restaurant.dto.CreateOrderRequest
 import com.ak.be.engine.controller.restaurant.dto.OrderDto
@@ -17,9 +18,11 @@ import javax.validation.Valid
 @RestController
 class OrderControllerDefault(@Autowired val orderService: OrderService,
                              @Autowired val notificationService: NotificationService,
-                             @Autowired val menuService: MenuService) : OrderController {
+                             @Autowired val menuService: MenuService, @Autowired val authService: AuthService) : OrderController {
     @PreAuthorize("hasAuthority('USER')")
     override fun createOrder(@Valid @RequestBody request: CreateOrderRequest): OrderDto {
+
+        val userOrFail = authService.getUserOrFail()
 
         val menuIds = request.menuIds
         val tableId = request.tableId
