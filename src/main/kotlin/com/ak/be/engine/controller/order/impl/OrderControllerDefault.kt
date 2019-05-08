@@ -1,9 +1,9 @@
 package com.ak.be.engine.controller.order.impl
 
-import com.ak.be.engine.controller.AuthService
 import com.ak.be.engine.controller.order.OrderController
 import com.ak.be.engine.controller.restaurant.dto.CreateOrderRequest
 import com.ak.be.engine.controller.restaurant.dto.OrderDto
+import com.ak.be.engine.service.auth.AuthService
 import com.ak.be.engine.service.menu.MenuService
 import com.ak.be.engine.service.model.Order
 import com.ak.be.engine.service.model.toDto

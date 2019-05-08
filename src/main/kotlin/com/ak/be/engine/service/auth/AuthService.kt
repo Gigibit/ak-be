@@ -1,4 +1,4 @@
-package com.ak.be.engine.controller
+package com.ak.be.engine.service.auth
 
 import com.ak.be.engine.service.model.User
 

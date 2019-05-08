@@ -1,7 +1,6 @@
 package com.ak.be.engine
 
-import com.ak.be.engine.auth.service.UserDetailsServiceDefault
-import com.ak.be.engine.auth.service.UserService
+import com.ak.be.engine.service.user.impl.UserServiceDefault
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -97,7 +96,7 @@ class ResourceServerConfiguration : ResourceServerConfigurerAdapter() {
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig(@Autowired val userService: UserService) : WebSecurityConfigurerAdapter() {
+class SecurityConfig(@Autowired val userService: UserServiceDefault) : WebSecurityConfigurerAdapter() {
 
 //    @Autowired
 //    @Throws(Exception::class)
@@ -109,7 +108,7 @@ class SecurityConfig(@Autowired val userService: UserService) : WebSecurityConfi
 
     @Bean
     override fun userDetailsService(): UserDetailsService {
-        return UserDetailsServiceDefault(userService)
+        return UserDetailsService(userService::createUserDetails)
     }
 
     override fun configure(http: HttpSecurity) {

@@ -1,4 +1,4 @@
-package com.ak.be.engine.auth.service
+package com.ak.be.engine.auth
 
 import com.ak.be.engine.service.model.User
 import org.springframework.security.core.GrantedAuthority

@@ -1,6 +1,7 @@
-package com.ak.be.engine.controller
+package com.ak.be.engine.service.auth.impl
 
-import com.ak.be.engine.auth.service.UserDetailsDefault
+import com.ak.be.engine.auth.UserDetailsDefault
+import com.ak.be.engine.service.auth.AuthService
 import com.ak.be.engine.service.model.User
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
