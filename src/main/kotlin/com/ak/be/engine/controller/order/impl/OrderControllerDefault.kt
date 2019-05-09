@@ -9,16 +9,16 @@ import com.ak.be.engine.service.model.Order
 import com.ak.be.engine.service.model.toDto
 import com.ak.be.engine.service.notification.NotificationService
 import com.ak.be.engine.service.order.OrderService
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
 
 @RestController
-class OrderControllerDefault(@Autowired val orderService: OrderService,
-                             @Autowired val notificationService: NotificationService,
-                             @Autowired val menuService: MenuService, @Autowired val authService: AuthService) : OrderController {
+class OrderControllerDefault(val orderService: OrderService,
+                             val notificationService: NotificationService,
+                             val menuService: MenuService,
+                             val authService: AuthService) : OrderController {
     @PreAuthorize("hasAuthority('USER')")
     override fun createOrder(@Valid @RequestBody request: CreateOrderRequest): OrderDto {
 
