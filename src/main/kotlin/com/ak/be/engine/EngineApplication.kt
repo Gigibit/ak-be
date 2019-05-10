@@ -1,7 +1,6 @@
 package com.ak.be.engine
 
 import com.ak.be.engine.service.user.impl.UserServiceDefault
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
@@ -36,7 +35,6 @@ import javax.sql.DataSource
 
 @EnableTransactionManagement
 @SpringBootApplication
-//@ConfigurationProprties
 @EnableAsync
 class EngineApplication
 
@@ -52,21 +50,15 @@ class WebSocketConfig : WebSocketMessageBrokerConfigurer {
         config.enableSimpleBroker("/topic")
         config.setApplicationDestinationPrefixes("/app")
 //        config.enableSimpleBroker("/topic", "/queue")
-//        config.setApplicationDestinationPrefixes("/app")
     }
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
-        //root
-//        registry.addEndpoint("/greeting").withSockJS()
         registry.addEndpoint("/ak-websocket").withSockJS()
     }
 }
 
-
 @Configuration
-
 @EnableResourceServer
-
 class ResourceServerConfiguration : ResourceServerConfigurerAdapter() {
 
     val resourceId = "resource-server-rest-api"
@@ -93,18 +85,9 @@ class ResourceServerConfiguration : ResourceServerConfigurerAdapter() {
 
 }
 
-
 @Configuration
 @EnableWebSecurity
-class SecurityConfig(@Autowired val userService: UserServiceDefault) : WebSecurityConfigurerAdapter() {
-
-//    @Autowired
-//    @Throws(Exception::class)
-//    fun configureGlobal(auth: AuthenticationManagerBuilder) {
-//        auth.inMemoryAuthentication().withUser("ian").password("{noop}ian").roles("USER", "ADMIN")
-//        auth.inMemoryAuthentication().withUser("dan").password("{noop}dan").roles("USER")
-//        auth.inMemoryAuthentication().withUser("chris").password("{noop}chris").roles("USER")
-//    }
+class SecurityConfig(val userService: UserServiceDefault) : WebSecurityConfigurerAdapter() {
 
     @Bean
     override fun userDetailsService(): UserDetailsService {
@@ -129,9 +112,9 @@ class SecurityConfig(@Autowired val userService: UserServiceDefault) : WebSecuri
 @Configuration
 @EnableAuthorizationServer
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-class AuthServerOAuth2Config(@Autowired val userDetailsService: UserDetailsService,
-                             @Autowired val dataSource: DataSource,
-                             @Autowired val authenticationManager: AuthenticationManager) : AuthorizationServerConfigurerAdapter() {
+class AuthServerOAuth2Config(val userDetailsService: UserDetailsService,
+                             val dataSource: DataSource,
+                             val authenticationManager: AuthenticationManager) : AuthorizationServerConfigurerAdapter() {
     @Bean
     fun oauthAccessDeniedHandler(): OAuth2AccessDeniedHandler {
         return OAuth2AccessDeniedHandler()
