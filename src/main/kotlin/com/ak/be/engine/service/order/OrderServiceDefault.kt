@@ -110,7 +110,7 @@ class OrderServiceDefault(@Autowired val orderRepository: OrderRepository,
         val menus = ArrayList<Menu>()
         for (menuOrder in menuOrders) {
             val menu = menuOrder.akMenuByMenuId?.let { n: AkMenuEntity ->
-                val dish = n.akDishByDishId?.let { d: AkDishEntity ->
+                val dish = n.dish?.let { d: AkDishEntity ->
                     Dish(d.id, d.title)
                 } ?: throw IllegalStateException("Dish is null")
                 Menu(n.id, n.state, n.type, dish)

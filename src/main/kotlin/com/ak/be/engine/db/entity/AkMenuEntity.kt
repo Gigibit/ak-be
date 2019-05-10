@@ -29,7 +29,7 @@ class AkMenuEntity {
     var type: Int = 0
     @get:ManyToOne
     @get:JoinColumn(name = "DISH_ID", referencedColumnName = "ID", nullable = false)
-    var akDishByDishId: AkDishEntity? = null
+    var dish: AkDishEntity? = null
     @get:ManyToOne
     @get:JoinColumn(name = "RESTAURANT_ID", referencedColumnName = "ID", nullable = false)
     var restaurant: AkRestaurantEntity? = null

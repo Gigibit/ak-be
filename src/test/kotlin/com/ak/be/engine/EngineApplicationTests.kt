@@ -24,10 +24,14 @@ class EngineApplicationTests {
     @Autowired
     lateinit var testRestTemplate: TestRestTemplate
 
+
     @Before
     fun setUp() {
-        val token = getToken()
+//        authenticate()
+    }
 
+    fun authenticate(email: String, password: String) {
+        val token = getToken(email, password)
         val arrayList = ArrayList<ClientHttpRequestInterceptor>()
         arrayList.add(ClientHttpRequestInterceptor { request, body, execution ->
             request.headers.add("Authorization", "Bearer ${token.accessToken}")
@@ -36,15 +40,20 @@ class EngineApplicationTests {
         testRestTemplate.restTemplate.interceptors = arrayList
     }
 
-    private fun getToken(): GetTokenResponse {
+    fun authenticate() {
+        authenticate("email1@email.com", "password")
+    }
+
+    private fun getToken(email: String, password: String): GetTokenResponse {
 
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
+        headers.set("Access-Control-Allow-Headers", "x-requested-with, authorization")
 
         val map = LinkedMultiValueMap<String, String>()
         map.add("grant_type", "password")
-        map.add("username", "email1@email.com")
-        map.add("password", "password")
+        map.add("username", email)
+        map.add(password, password)
 
         val request = HttpEntity<MultiValueMap<String, String>>(map, headers)
 

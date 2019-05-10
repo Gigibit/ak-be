@@ -30,7 +30,7 @@ class AkDishEntity {
     @get:UpdateTimestamp
     @get:Column(name = "UPDATED_AT")
     var updatedAt: Timestamp? = null
-    @get:OneToMany(mappedBy = "akDishByDishId")
+    @get:OneToMany(mappedBy = "dish")
     var akMenusById: Collection<AkMenuEntity>? = null
 
     override fun equals(other: Any?): Boolean {

@@ -1,15 +1,15 @@
 package com.ak.be.engine.controller.restaurant.impl
 
-import com.ak.be.engine.controller.dish.dto.GetDishesByRestaurantIdResponse
 import com.ak.be.engine.controller.restaurant.RestaurantController
 import com.ak.be.engine.controller.restaurant.dto.CreateTableForRestaurantResponse
+import com.ak.be.engine.controller.restaurant.dto.GetMenuByRestaurantResponse
 import com.ak.be.engine.controller.restaurant.dto.GetOrdersResponse
 import com.ak.be.engine.controller.restaurant.dto.RestaurantDto
 import com.ak.be.engine.controller.table.dto.CreateTableForRestaurantRequest
-import com.ak.be.engine.controller.table.dto.GetTablesByRestaurantIdResponse
+import com.ak.be.engine.controller.table.dto.GetTablesForRestaurantResponse
 import com.ak.be.engine.service.auth.AuthService
-import com.ak.be.engine.service.dish.DishService
-import com.ak.be.engine.service.model.Dish
+import com.ak.be.engine.service.menu.MenuService
+import com.ak.be.engine.service.model.Menu
 import com.ak.be.engine.service.model.Table
 import com.ak.be.engine.service.model.toDto
 import com.ak.be.engine.service.order.OrderService
@@ -27,11 +27,11 @@ const val DEFAULT_LIMIT = 10
 const val DEFAULT_OFFSET = 0
 
 @RestController
-class RestaurantControllerDefault(val dishService: DishService,
-                                  val tableService: TableService,
+class RestaurantControllerDefault(val tableService: TableService,
                                   val restaurantService: RestaurantService,
                                   val orderService: OrderService,
                                   val simpMessagingTemplate: SimpMessageSendingOperations,
+                                  val menuService: MenuService,
                                   val authService: AuthService) : RestaurantController {
 
     override fun getRestaurantById(@PathVariable restaurantId: Int): RestaurantDto {
@@ -49,14 +49,18 @@ class RestaurantControllerDefault(val dishService: DishService,
         }
     }
 
-    override fun getDishesById(@PathVariable restaurantId: Int): GetDishesByRestaurantIdResponse {
-        val list = dishService.getDishesByRestaurantId(restaurantId).map(Dish::toDto)
-        return GetDishesByRestaurantIdResponse(list)
+    override fun getMenuForRestaurant(@PathVariable restaurantId: Int): GetMenuByRestaurantResponse {
+        //todo should be n accessed by all without login
+        val list = menuService.findMenuForRestaurantId(restaurantId).map(Menu::toDto)
+        return GetMenuByRestaurantResponse(list)
     }
 
-    override fun getTablesById(@PathVariable restaurantId: Int): GetTablesByRestaurantIdResponse {
+    @PreAuthorize("hasAuthority('ADMIN')")
+    override fun getTablesForRestaurant(@PathVariable restaurantId: Int): GetTablesForRestaurantResponse {
+        val userOrFail = authService.getUserOrFail()
+        restaurantService.validateUserBelongsToRestaurant(userOrFail, restaurantId)
         val list = tableService.getTablesByRestaurantsId(restaurantId).map(Table::toDto)
-        return GetTablesByRestaurantIdResponse(list)
+        return GetTablesForRestaurantResponse(list)
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -67,7 +71,10 @@ class RestaurantControllerDefault(val dishService: DishService,
         return CreateTableForRestaurantResponse(createTablesForRestaurantsId.toDto())
     }
 
-    override fun getOrders(@PathVariable restaurantId: Int, @RequestParam("limit") limit: Int?, @RequestParam("offset") offset: Int?): GetOrdersResponse {
+    @PreAuthorize("hasAuthority('ADMIN')")
+    override fun getOrdersForRestaurant(@PathVariable restaurantId: Int, @RequestParam("limit") limit: Int?, @RequestParam("offset") offset: Int?): GetOrdersResponse {
+        val userOrFail = authService.getUserOrFail()
+        restaurantService.validateUserBelongsToRestaurant(userOrFail, restaurantId)
         val orders = orderService.getOrders(restaurantId, limit ?: DEFAULT_LIMIT, offset ?: DEFAULT_OFFSET)
                 .map { order -> order.toDto() }
         return GetOrdersResponse(orders)

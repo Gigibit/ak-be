@@ -32,7 +32,6 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer
 import javax.sql.DataSource
 
-
 @EnableTransactionManagement
 @SpringBootApplication
 @EnableAsync
@@ -78,8 +77,7 @@ class ResourceServerConfiguration : ResourceServerConfigurerAdapter() {
                 .antMatchers(securedPattern)
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, securedPattern)
-                .access(securedWriteScope)//"#oauth2.hasScope('write')"
+                .antMatchers(HttpMethod.POST, securedPattern).access(securedWriteScope)//"#oauth2.hasScope('write')"
                 .anyRequest().access(securedReadScope)
     }
 
