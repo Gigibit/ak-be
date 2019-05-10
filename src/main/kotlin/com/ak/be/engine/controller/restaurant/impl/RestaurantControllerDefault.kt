@@ -1,22 +1,22 @@
 package com.ak.be.engine.controller.restaurant.impl
 
-import com.ak.be.engine.controller.Authenticatable
-import com.ak.be.engine.controller.dish.dto.DishDto
 import com.ak.be.engine.controller.dish.dto.GetDishesByRestaurantIdResponse
 import com.ak.be.engine.controller.restaurant.RestaurantController
+import com.ak.be.engine.controller.restaurant.dto.CreateTableForRestaurantResponse
 import com.ak.be.engine.controller.restaurant.dto.GetOrdersResponse
 import com.ak.be.engine.controller.restaurant.dto.RestaurantDto
 import com.ak.be.engine.controller.table.dto.CreateTableForRestaurantRequest
 import com.ak.be.engine.controller.table.dto.GetTablesByRestaurantIdResponse
-import com.ak.be.engine.controller.table.dto.TableDto
+import com.ak.be.engine.service.auth.AuthService
 import com.ak.be.engine.service.dish.DishService
+import com.ak.be.engine.service.model.Dish
 import com.ak.be.engine.service.model.Table
 import com.ak.be.engine.service.model.toDto
 import com.ak.be.engine.service.order.OrderService
 import com.ak.be.engine.service.restaurant.RestaurantService
 import com.ak.be.engine.service.table.TableService
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.simp.SimpMessageSendingOperations
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
@@ -27,15 +27,17 @@ const val DEFAULT_LIMIT = 10
 const val DEFAULT_OFFSET = 0
 
 @RestController
-class RestaurantControllerDefault(@Autowired val dishService: DishService,
-                                  @Autowired val tableService: TableService,
-                                  @Autowired val restaurantService: RestaurantService,
-                                  @Autowired val orderService: OrderService,
-                                  @Autowired val simpMessagingTemplate: SimpMessageSendingOperations) : RestaurantController, Authenticatable {
+class RestaurantControllerDefault(val dishService: DishService,
+                                  val tableService: TableService,
+                                  val restaurantService: RestaurantService,
+                                  val orderService: OrderService,
+                                  val simpMessagingTemplate: SimpMessageSendingOperations,
+                                  val authService: AuthService) : RestaurantController {
 
     override fun getRestaurantById(@PathVariable restaurantId: Int): RestaurantDto {
-        val authentication = getAuthentication()
-        simpMessagingTemplate.convertAndSendToUser(authentication.name, "/topic/orders", "{\"content\":\"Hello, " + HtmlUtils.htmlEscape(authentication.name) + "\"}")
+        val userOrFail = authService.getUserOrFail()
+
+        simpMessagingTemplate.convertAndSendToUser(userOrFail.email, "/topic/orders", "{\"content\":\"Hello, " + HtmlUtils.htmlEscape(userOrFail.email) + "\"}")
         simpMessagingTemplate.convertAndSendToUser("dan", "/topic/orders", "{\"content\":\"Hello, " + HtmlUtils.htmlEscape("dan") + "\"}")
 
         val restaurantById = restaurantService.getRestaurantById(restaurantId)
@@ -43,23 +45,26 @@ class RestaurantControllerDefault(@Autowired val dishService: DishService,
             throw IllegalArgumentException("not found")
         } else {
             return restaurantById.toDto()
+
         }
     }
 
     override fun getDishesById(@PathVariable restaurantId: Int): GetDishesByRestaurantIdResponse {
-        val list = dishService.getDishesByRestaurantId(restaurantId).map { DishDto(it.id, it.title) }
+        val list = dishService.getDishesByRestaurantId(restaurantId).map(Dish::toDto)
         return GetDishesByRestaurantIdResponse(list)
     }
 
     override fun getTablesById(@PathVariable restaurantId: Int): GetTablesByRestaurantIdResponse {
-        val list = tableService.getTablesByRestaurantsId(restaurantId).map { table -> table.toDto() }
+        val list = tableService.getTablesByRestaurantsId(restaurantId).map(Table::toDto)
         return GetTablesByRestaurantIdResponse(list)
     }
 
-    override fun createTableById(@PathVariable restaurantId: Int, @RequestBody request: CreateTableForRestaurantRequest): TableDto {
-        val table = Table(0, request.title, request.numberOfPlaces)
-        val createTablesForRestaurantsId = tableService.createTablesForRestaurantsId(restaurantId, table)
-        return createTablesForRestaurantsId.toDto()
+    @PreAuthorize("hasAuthority('ADMIN')")
+    override fun createTableForRestaurant(@PathVariable restaurantId: Int, @RequestBody request: CreateTableForRestaurantRequest): CreateTableForRestaurantResponse {
+        val userOrFail = authService.getUserOrFail()
+        restaurantService.validateUserBelongsToRestaurant(userOrFail, restaurantId)
+        val createTablesForRestaurantsId = tableService.createTablesForRestaurantsId(restaurantId, Table.new(request.title, request.numberOfPlaces))
+        return CreateTableForRestaurantResponse(createTablesForRestaurantsId.toDto())
     }
 
     override fun getOrders(@PathVariable restaurantId: Int, @RequestParam("limit") limit: Int?, @RequestParam("offset") offset: Int?): GetOrdersResponse {
