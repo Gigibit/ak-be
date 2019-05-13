@@ -3,6 +3,7 @@ package com.ak.be.engine
 import com.ak.be.engine.service.user.impl.UserServiceDefault
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -28,12 +29,13 @@ import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHand
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.filter.CorsFilter
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer
 import java.util.*
 import javax.sql.DataSource
-import kotlin.collections.HashMap
 
 @EnableTransactionManagement
 @SpringBootApplication
@@ -97,6 +99,7 @@ class SecurityConfig(val userService: UserServiceDefault) : WebSecurityConfigure
 
     override fun configure(http: HttpSecurity) {
         super.configure(http.csrf().disable())
+
     }
 
     override fun configure(auth: AuthenticationManagerBuilder) {
@@ -136,16 +139,27 @@ class AuthServerOAuth2Config(val userDetailsService: UserDetailsService,
         endpoints.tokenStore(JdbcTokenStore(dataSource))
                 .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService)
+    }
 
-        //cross origin config
-        val corsConfigMap = HashMap<String, CorsConfiguration>()
+}
+
+@Configuration
+class CorsConfig {
+    @Bean
+    fun corsFilterRegistrationBean(): FilterRegistrationBean<*> {
+        val source = UrlBasedCorsConfigurationSource()
         val config = CorsConfiguration()
+        config.applyPermitDefaultValues()
         config.allowCredentials = true
-        config.allowedOrigins = Collections.singletonList("*")
-        config.allowedMethods = Collections.singletonList("*")
-        config.allowedHeaders = Collections.singletonList("*")
-        corsConfigMap["/oauth/token"] = config
-        endpoints.frameworkEndpointHandlerMapping.corsConfigurations = corsConfigMap
-
+        config.allowedOrigins = Arrays.asList("*")
+        config.allowedHeaders = Arrays.asList("*")
+        config.allowedMethods = Arrays.asList("*")
+        config.exposedHeaders = Arrays.asList("content-length")
+        config.maxAge = 3600L
+        source.registerCorsConfiguration("/**", config)
+        val bean = FilterRegistrationBean(CorsFilter(source))
+        bean.order = 0
+        return bean
     }
 }
+
