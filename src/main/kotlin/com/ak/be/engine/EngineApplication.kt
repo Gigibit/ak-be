@@ -27,10 +27,13 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore
 import org.springframework.transaction.annotation.EnableTransactionManagement
+import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer
+import java.util.*
 import javax.sql.DataSource
+import kotlin.collections.HashMap
 
 @EnableTransactionManagement
 @SpringBootApplication
@@ -133,6 +136,16 @@ class AuthServerOAuth2Config(val userDetailsService: UserDetailsService,
         endpoints.tokenStore(JdbcTokenStore(dataSource))
                 .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService)
-    }
 
+        //cross origin config
+        val corsConfigMap = HashMap<String, CorsConfiguration>()
+        val config = CorsConfiguration()
+        config.allowCredentials = true
+        config.allowedOrigins = Collections.singletonList("*")
+        config.allowedMethods = Collections.singletonList("*")
+        config.allowedHeaders = Collections.singletonList("*")
+        corsConfigMap["/oauth/token"] = config
+        endpoints.frameworkEndpointHandlerMapping.corsConfigurations = corsConfigMap
+
+    }
 }
