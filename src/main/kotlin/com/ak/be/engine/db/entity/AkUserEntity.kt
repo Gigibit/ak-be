@@ -5,6 +5,7 @@ import org.hibernate.annotations.UpdateTimestamp
 import java.sql.Timestamp
 import java.util.*
 import javax.persistence.*
+import kotlin.collections.ArrayList
 
 @Entity
 @Table(name = "AK_USER", schema = "PUBLIC", catalog = "DEFAULT")
@@ -59,7 +60,7 @@ class AkUserEntity {
 
     @get:ManyToMany(fetch = FetchType.LAZY)
     @get:JoinTable(name = "AK_USER_RESTAURANT", joinColumns = [JoinColumn(name = "USER_ID", referencedColumnName = "ID")], inverseJoinColumns = [JoinColumn(name = "RESTAURANT_ID", referencedColumnName = "ID")])
-    var restaurants: Collection<AkRestaurantEntity>? = null
+    var restaurants: Collection<AkRestaurantEntity> = ArrayList()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

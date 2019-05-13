@@ -2,6 +2,7 @@ package com.ak.be.engine.service.user.impl
 
 import com.ak.be.engine.auth.UserDetailsDefault
 import com.ak.be.engine.db.repository.UserRepository
+import com.ak.be.engine.service.model.Restaurant
 import com.ak.be.engine.service.model.User
 import com.ak.be.engine.service.model.fromEntity
 import com.ak.be.engine.service.user.UserService
@@ -29,4 +30,12 @@ class UserServiceDefault(@Autowired val userRepository: UserRepository) : UserSe
 
         return userDetails
     }
+
+    override fun getRestaurantsByUserId(userId: Int): List<Restaurant> {
+        val userById = userRepository.findById(userId)
+        val akUserEntity = if (userById.isPresent) userById.get() else throw IllegalArgumentException("user not found")
+        return akUserEntity.restaurants.map { Restaurant.fromEntity(it) }
+    }
+
 }
+

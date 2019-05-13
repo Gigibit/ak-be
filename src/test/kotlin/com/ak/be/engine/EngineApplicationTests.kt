@@ -53,7 +53,7 @@ class EngineApplicationTests {
         val map = LinkedMultiValueMap<String, String>()
         map.add("grant_type", "password")
         map.add("username", email)
-        map.add(password, password)
+        map.add("password", password)
 
         val request = HttpEntity<MultiValueMap<String, String>>(map, headers)
 
