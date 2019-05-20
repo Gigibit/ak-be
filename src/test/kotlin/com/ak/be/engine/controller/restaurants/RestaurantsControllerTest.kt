@@ -19,7 +19,7 @@ class RestaurantsControllerTest : EngineApplicationTests() {
 
     @Test
     fun getMenuForRestaurant() {
-        authenticate()
+//        authenticate()
         val result = testRestTemplate.getForEntity(GET_MENU_BY_ID.replace("{restaurantId}", "1"), GetMenuByRestaurantResponse::class.java)
         Assert.assertEquals(result.statusCode, HttpStatus.OK)
         Assert.assertNotNull(result)

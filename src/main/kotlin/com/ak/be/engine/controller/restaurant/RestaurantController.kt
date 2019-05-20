@@ -9,7 +9,7 @@ import com.ak.be.engine.controller.table.dto.GetTablesForRestaurantResponse
 import org.springframework.web.bind.annotation.*
 
 
-const val GET_MENU_BY_ID = "/restaurants/{restaurantId}/menu"
+const val GET_MENU_BY_ID = "/public/restaurants/{restaurantId}/menu"
 const val GET_TABLES_BY_ID = "/restaurants/{restaurantId}/tables"
 const val CREATE_TABLES_BY_ID = "/restaurants/{restaurantId}/tables"
 const val GET_RESTAURANT_BY_ID = "/restaurants/{restaurantId}"

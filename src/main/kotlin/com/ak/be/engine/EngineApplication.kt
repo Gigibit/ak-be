@@ -82,6 +82,7 @@ class ResourceServerConfiguration : ResourceServerConfigurerAdapter() {
                 .antMatchers(securedPattern)
                 .and()
                 .authorizeRequests()
+                .antMatchers("/public/**").permitAll()
                 .antMatchers(HttpMethod.POST, securedPattern).access(securedWriteScope)//"#oauth2.hasScope('write')"
                 .anyRequest().access(securedReadScope)
     }
