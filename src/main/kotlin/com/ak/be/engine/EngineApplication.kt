@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer
@@ -91,7 +92,7 @@ class ResourceServerConfiguration : ResourceServerConfigurerAdapter() {
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig(val userService: UserServiceDefault) : WebSecurityConfigurerAdapter() {
+class SecurityConfig(val userService: UserServiceDefault, val passwordEncoder: PasswordEncoder) : WebSecurityConfigurerAdapter() {
 
     @Bean
     override fun userDetailsService(): UserDetailsService {
@@ -104,7 +105,7 @@ class SecurityConfig(val userService: UserServiceDefault) : WebSecurityConfigure
     }
 
     override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.userDetailsService(userDetailsService()).passwordEncoder(BCryptPasswordEncoder(8))
+        auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder)
     }
 
     @Bean
@@ -141,7 +142,6 @@ class AuthServerOAuth2Config(val userDetailsService: UserDetailsService,
                 .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService)
     }
-
 }
 
 @Configuration
@@ -161,6 +161,11 @@ class CorsConfig {
         val bean = FilterRegistrationBean(CorsFilter(source))
         bean.order = 0
         return bean
+    }
+
+    @Bean
+    fun passwordEncoder(): PasswordEncoder {
+        return BCryptPasswordEncoder(8)
     }
 }
 

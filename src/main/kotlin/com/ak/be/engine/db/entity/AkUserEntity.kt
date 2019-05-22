@@ -56,7 +56,7 @@ class AkUserEntity {
 
     @get:ManyToMany(fetch = FetchType.LAZY)
     @get:JoinTable(name = "AK_USER_AUTHORITY", joinColumns = [JoinColumn(name = "USER_ID", referencedColumnName = "ID")], inverseJoinColumns = [JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")])
-    var authorities: Collection<AkAuthorityEntity>? = null
+    var authorities: Collection<AkAuthorityEntity> = ArrayList()
 
     @get:ManyToMany(fetch = FetchType.LAZY)
     @get:JoinTable(name = "AK_USER_RESTAURANT", joinColumns = [JoinColumn(name = "USER_ID", referencedColumnName = "ID")], inverseJoinColumns = [JoinColumn(name = "RESTAURANT_ID", referencedColumnName = "ID")])

@@ -1,12 +1,11 @@
 package com.ak.be.engine.controller.user.impl
 
 import com.ak.be.engine.EngineApplicationTests
+import com.ak.be.engine.controller.user.CREATE_USER
 import com.ak.be.engine.controller.user.GET_ADMIN_ME
 import com.ak.be.engine.controller.user.GET_USER_BY_ID
 import com.ak.be.engine.controller.user.GET_USER_ME
-import com.ak.be.engine.controller.user.dto.GetAdminMeResponse
-import com.ak.be.engine.controller.user.dto.GetUserByIdResponse
-import com.ak.be.engine.controller.user.dto.GetUserMeResponse
+import com.ak.be.engine.controller.user.dto.*
 import org.junit.Assert
 import org.junit.Test
 import org.springframework.http.HttpStatus
@@ -45,4 +44,22 @@ internal class UserControllerTest : EngineApplicationTests() {
         Assert.assertNotNull(tables.body)
         Assert.assertNotNull(tables.body!!.context)
     }
+
+    @Test
+    fun createUser() {
+
+        val email = "test@email.com"
+        val password = "password"
+        val createUserRequest = CreateUserRequest(email, "new firstname", "new lastname", password)
+
+        val responseEntity = testRestTemplate.postForEntity(CREATE_USER, createUserRequest, CreateUserResponse::class.java)
+        Assert.assertEquals(responseEntity.statusCode, HttpStatus.OK)
+        Assert.assertNotNull(responseEntity)
+        Assert.assertNotNull(responseEntity.body)
+        Assert.assertNotNull(responseEntity.body!!.user.id)
+
+
+        authenticate(email, password)
+    }
+
 }
