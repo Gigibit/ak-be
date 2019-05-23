@@ -81,7 +81,7 @@ class RestaurantsControllerTest : EngineApplicationTests() {
     @Test
     fun createRestaurant() {
         authenticate()
-        val request = CreateRestaurantRequest("New Restaurant", "Img", "Description")
+        val request = CreateRestaurantRequest(CreateRestaurantDto("New Restaurant", "Img", "Description"))
         val result = testRestTemplate.postForEntity(CREATE_RESTAURANT, request, CreateRestaurantResponse::class.java)
         Assert.assertNotNull(result)
         Assert.assertNotNull(result.body)

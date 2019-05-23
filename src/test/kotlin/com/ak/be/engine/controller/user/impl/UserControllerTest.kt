@@ -1,6 +1,7 @@
 package com.ak.be.engine.controller.user.impl
 
 import com.ak.be.engine.EngineApplicationTests
+import com.ak.be.engine.controller.restaurant.dto.CreateRestaurantDto
 import com.ak.be.engine.controller.user.CREATE_USER
 import com.ak.be.engine.controller.user.GET_ADMIN_ME
 import com.ak.be.engine.controller.user.GET_USER_BY_ID
@@ -57,6 +58,24 @@ internal class UserControllerTest : EngineApplicationTests() {
         Assert.assertNotNull(responseEntity)
         Assert.assertNotNull(responseEntity.body)
         Assert.assertNotNull(responseEntity.body!!.user.id)
+
+
+        authenticate(email, password)
+    }
+
+    @Test
+    fun createUserWithRestaurant() {
+
+        val email = "test@email.com"
+        val password = "password"
+        val createUserRequest = CreateUserRequest(email, "new firstname", "new lastname", password, CreateRestaurantDto("New Restaurant", "img url", null))
+
+        val responseEntity = testRestTemplate.postForEntity(CREATE_USER, createUserRequest, CreateUserResponse::class.java)
+        Assert.assertEquals(responseEntity.statusCode, HttpStatus.OK)
+        Assert.assertNotNull(responseEntity)
+        Assert.assertNotNull(responseEntity.body)
+        Assert.assertNotNull(responseEntity.body!!.user.id)
+        Assert.assertNotNull(responseEntity.body!!.restaurant)
 
 
         authenticate(email, password)

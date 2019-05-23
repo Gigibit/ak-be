@@ -41,14 +41,15 @@ class RestaurantControllerDefault(val tableService: TableService,
 
     @PreAuthorize("hasAuthority('ADMIN')")
     override fun createRestaurant(@Valid @RequestBody request: CreateRestaurantRequest): CreateRestaurantResponse {
+        val restaurant = request.restaurant
         val userOrFail = authService.getUserOrFail()
         val userRestaurants = restaurantService.getUserRestaurants(userOrFail)
         if (userRestaurants.isEmpty()) {
             throw IllegalStateException("Not allowed to create restaurant for this type of user")
         } else {
-            val title = request.title
-            val imgUrl = request.imgUrl
-            val description = request.description
+            val title = restaurant.title
+            val imgUrl = restaurant.imgUrl
+            val description = restaurant.description
             val createRestaurant = restaurantService.createRestaurant(userOrFail, title, imgUrl, description)
             return CreateRestaurantResponse(createRestaurant.toDto())
         }
