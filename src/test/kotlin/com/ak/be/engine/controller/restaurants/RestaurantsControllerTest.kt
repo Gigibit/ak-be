@@ -3,10 +3,7 @@ package com.ak.be.engine.controller.restaurants
 import com.ak.be.engine.EngineApplicationTests
 import com.ak.be.engine.controller.error.AkError
 import com.ak.be.engine.controller.restaurant.*
-import com.ak.be.engine.controller.restaurant.dto.CreateTableForRestaurantResponse
-import com.ak.be.engine.controller.restaurant.dto.GetMenuByRestaurantResponse
-import com.ak.be.engine.controller.restaurant.dto.GetOrdersResponse
-import com.ak.be.engine.controller.restaurant.dto.RestaurantDto
+import com.ak.be.engine.controller.restaurant.dto.*
 import com.ak.be.engine.controller.table.dto.CreateTableForRestaurantRequest
 import com.ak.be.engine.controller.table.dto.GetTablesForRestaurantResponse
 import com.ak.be.engine.controller.table.dto.TableDto
@@ -79,6 +76,31 @@ class RestaurantsControllerTest : EngineApplicationTests() {
         Assert.assertNotNull(result)
         Assert.assertNotNull(result.body)
         Assert.assertTrue(result.body!!.message.contains("restaurant not found"))
+    }
+
+    @Test
+    fun createRestaurant() {
+        authenticate()
+        val request = CreateRestaurantRequest("New Restaurant", "Img", "Description")
+        val result = testRestTemplate.postForEntity(CREATE_RESTAURANT, request, CreateRestaurantResponse::class.java)
+        Assert.assertNotNull(result)
+        Assert.assertNotNull(result.body)
+        Assert.assertNotNull(result.body!!.restaurant.id)
+        getRestaurants()
+    }
+
+    @Test
+    fun getUserRestaurants() {
+        authenticate()
+        getRestaurants()
+    }
+
+    private fun getRestaurants() {
+        val result = testRestTemplate.getForEntity(GET_RESTAURANTS, GetRestaurantsResponse::class.java)
+        Assert.assertNotNull(result)
+        Assert.assertEquals(result.statusCode, HttpStatus.OK)
+        Assert.assertNotNull(result.body)
+        Assert.assertTrue(result.body!!.restaurants.isNotEmpty())
     }
 
 

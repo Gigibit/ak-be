@@ -1,10 +1,7 @@
 package com.ak.be.engine.controller.restaurant.impl
 
 import com.ak.be.engine.controller.restaurant.RestaurantController
-import com.ak.be.engine.controller.restaurant.dto.CreateTableForRestaurantResponse
-import com.ak.be.engine.controller.restaurant.dto.GetMenuByRestaurantResponse
-import com.ak.be.engine.controller.restaurant.dto.GetOrdersResponse
-import com.ak.be.engine.controller.restaurant.dto.RestaurantDto
+import com.ak.be.engine.controller.restaurant.dto.*
 import com.ak.be.engine.controller.table.dto.CreateTableForRestaurantRequest
 import com.ak.be.engine.controller.table.dto.GetTablesForRestaurantResponse
 import com.ak.be.engine.service.auth.AuthService
@@ -22,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.HtmlUtils
+import javax.validation.Valid
 
 const val DEFAULT_LIMIT = 10
 const val DEFAULT_OFFSET = 0
@@ -33,6 +31,28 @@ class RestaurantControllerDefault(val tableService: TableService,
                                   val simpMessagingTemplate: SimpMessageSendingOperations,
                                   val menuService: MenuService,
                                   val authService: AuthService) : RestaurantController {
+    override fun getRestaurants(): GetRestaurantsResponse {
+        val userOrFail = authService.getUserOrFail()
+        val userRestaurants = restaurantService.getUserRestaurants(userOrFail)
+                .map { it.toDto() }
+        return GetRestaurantsResponse(userRestaurants)
+    }
+
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    override fun createRestaurant(@Valid @RequestBody request: CreateRestaurantRequest): CreateRestaurantResponse {
+        val userOrFail = authService.getUserOrFail()
+        val userRestaurants = restaurantService.getUserRestaurants(userOrFail)
+        if (userRestaurants.isEmpty()) {
+            throw IllegalStateException("Not allowed to create restaurant for this type of user")
+        } else {
+            val title = request.title
+            val imgUrl = request.imgUrl
+            val description = request.description
+            val createRestaurant = restaurantService.createRestaurant(userOrFail, title, imgUrl, description)
+            return CreateRestaurantResponse(createRestaurant.toDto())
+        }
+    }
 
     override fun getRestaurantById(@PathVariable restaurantId: Int): RestaurantDto {
         val userOrFail = authService.getUserOrFail()

@@ -34,7 +34,7 @@ class AkRestaurantEntity {
     @get:OneToMany(mappedBy = "restaurant")
     var menuItems: Collection<AkMenuEntity> = ArrayList()
     @get:OneToMany(mappedBy = "akRestaurantByRestaurantId")
-    var akTablesById: Collection<AkTableEntity>? = null
+    var tables: Collection<AkTableEntity> = ArrayList()
 
     @get:ManyToMany(fetch = FetchType.LAZY)
     @get:JoinTable(name = "AK_USER_RESTAURANT", joinColumns = [JoinColumn(name = "RESTAURANT_ID", referencedColumnName = "ID")], inverseJoinColumns = [JoinColumn(name = "USER_ID", referencedColumnName = "ID")])
